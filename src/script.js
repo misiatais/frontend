@@ -23,31 +23,31 @@ chatForm.addEventListener('submit', (e) => {
   const userMsg = chatInput.value.trim();
   if (!userMsg) return;
 
-  addMessage(userMsg, 'user'); // mostra mensagem do usuário
+  addMessage(userMsg, 'user'); 
   chatInput.value = '';
 
-  // Simula resposta do bot após 1s
+ 
   setTimeout(() => {
     const botReply = `Você disse: "${userMsg}". Isso aí é com o Mikael!`;
     addMessage(botReply, 'bot');
   }, 1000);
 });
 
-// Mensagem inicial do bot
+
 addMessage('Olá! Seja bem-vindo(a) ao AutisMind. Como posso ajudar?', 'bot');
 
-// Seleciona os elementos de personagem só uma vez!
+
 const btnPersonagem = document.getElementById('btn-personagem');
 const telaPersonagem = document.getElementById('criar-personagem');
 const btnFecharPersonagem = document.getElementById('fechar-personagem');
 
 btnPersonagem.addEventListener('click', (e) => {
-  e.preventDefault();  // evita o link padrão
-  telaPersonagem.style.display = 'flex';  // mostra a tela
+  e.preventDefault();  
+  telaPersonagem.style.display = 'flex';
 });
 
 btnFecharPersonagem.addEventListener('click', () => {
-  telaPersonagem.style.display = 'none';  // esconde a tela
+  telaPersonagem.style.display = 'none'; 
 });
 const formPersonagem = document.getElementById('form-personagem');
 const inputNome = document.getElementById('personagem-nome');
@@ -92,18 +92,18 @@ const telaLogin = document.getElementById('tela-login');
 const btnFecharLogin = document.getElementById('fechar-login');
 const formLogin = document.getElementById('form-login');
 
-// Abrir tela de login
+
 btnLogin.addEventListener('click', (e) => {
   e.preventDefault();
   telaLogin.style.display = 'flex';
 });
 
-// Fechar tela de login
+
 btnFecharLogin.addEventListener('click', () => {
   telaLogin.style.display = 'none';
 });
 
-// Enviar login
+
 formLogin.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('login-email').value.trim();
@@ -127,7 +127,7 @@ formLogin.addEventListener('submit', async (e) => {
       alert('Login realizado com sucesso!');
       telaLogin.style.display = 'none';
 
-      // Armazena o usuário (você pode armazenar o token aqui, se usar JWT futuramente)
+     
       console.log(data.user);
     } else {
       alert(data.message || 'Erro no login');
