@@ -28,7 +28,7 @@ chatForm.addEventListener('submit', (e) => {
 
  
   setTimeout(() => {
-    const botReply = `Você disse: "${userMsg}". Isso aí é com o Mikael!`;
+    const botReply = `Você disse: "${userMsg}"? Isso aí é com o Mikael!`;
     addMessage(botReply, 'bot');
   }, 1000);
 });
@@ -136,4 +136,66 @@ formLogin.addEventListener('submit', async (e) => {
     console.error(err);
     alert('Erro ao conectar com o servidor');
   }
+});
+
+document.getElementById('form-cadastro')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Cadastro realizado com sucesso!');
+    document.getElementById('form-cadastro').reset();
+    document.querySelector('#cadastroModal .btn-close').click();
+});
+
+function mostrarHistorico() {
+    const lista = document.getElementById('historico-lista');
+    let historico = JSON.parse(localStorage.getItem('historico')) || [];
+    lista.innerHTML = '';
+    if (historico.length === 0) {
+        lista.innerHTML = '<p>Nenhuma conversa salva.</p>';
+        return;
+    }
+    historico.reverse().forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'historico-item';
+        div.innerHTML = `<strong>${item.data}:</strong> ${item.texto}`;
+        lista.appendChild(div);
+    });
+}
+
+document.getElementById('btn-historico').addEventListener('click', function(e) {
+    e.preventDefault();
+    mostrarHistorico();
+    document.getElementById('historico').style.display = 'block';
+});
+
+document.getElementById('fechar-historico').addEventListener('click', function() {
+    document.getElementById('historico').style.display = 'none';
+});
+
+function salvarConversa() {
+    let historico = JSON.parse(localStorage.getItem('historico')) || [];
+    const mensagens = Array.from(document.querySelectorAll('#messages .message')).map(div => ({
+        texto: div.textContent,
+        remetente: div.classList.contains('user') ? 'Usuário' : 'Bot'
+    }));
+    if (mensagens.length > 0) {
+        historico.push({
+            data: new Date().toLocaleString(),
+            conversa: mensagens
+        });
+        localStorage.setItem('historico', JSON.stringify(historico));
+    }
+}
+document.querySelector('.item-menu .bi-signal').closest('a').addEventListener('click', function(e) {
+    e.preventDefault();  
+    salvarConversa();
+
+    document.getElementById('messages').innerHTML = '';
+});
+
+document.querySelector('.item-menu .bi-box-arrow-right').closest('a').addEventListener('click', function(e) {
+    e.preventDefault();
+    if (confirm('Quer mesmo nos deixar?:(')) {
+        localStorage.removeItem('usuario');
+        window.location.href = 'inicio.html';
+    }
 });

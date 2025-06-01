@@ -186,3 +186,130 @@
       background: #0971c2;
     }
  
+    /* tela inicial */
+     #tela-inicio {
+    display: flex;
+     flex-direction: column;
+    justify-content: flex-start;
+     align-items: center ;
+      height: 100vh;
+      padding-top: 100px;
+       background: linear-gradient(to bottom, #000088, #0010c5, #2f3bc8);
+       color: white;
+       gap: 40px;
+   }
+  
+   .titulo{
+            background: linear-gradient(to bottom, #c8edf7, #2784f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+            font-size: 50px;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 80px;
+            align-content: center;
+        }
+  .container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    color: white;
+  }  
+  .row{
+    display: flex;
+    gap: 60px;
+  }
+
+  .col-md-6{
+
+    width: 100%;
+    max-width: 500px;
+    background: rgba(19, 124, 222, 0.259);
+    border-radius: 0px;
+    border: white 1px solid;
+    box-shadow: 0 0 15px rgba(189, 180, 180, 0.5);
+    padding: 20px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* cadastro */
+.modal-content{
+    background: rgba(98, 174, 246, 0.393);
+    border-radius: 0px;
+    border: white 1px solid;
+    padding: 10px;
+    backdrop-filter: blur(10px);
+  }
+
+.modal-title{
+    color: rgb(246, 250, 253);
+   
+  }
+
+  .modal-header{
+    border-radius: 0px;
+    padding: 10px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+
+  }
+
+  .modal-body{
+    color: #ffffff;
+    padding: 20px;
+    gap: 20px;
+  }
+
+    .modal-footer{
+    background: rgba(98, 174, 246, 0.393);
+    border-radius: 0px;
+    border: white 1px solid;
+    padding: 10px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .btn-close{
+    color: white;
+  }
+  
+  .btn-primary{
+    background-color: #0b93f6;
+    border-color: #749ebc;
+  }
+  
+  .btn-primary:hover{
+    background-color: #0971c2;
+    border-color: #0971c2;
+  }
+  
+  /* historico */
+  .historico-lateral {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 210px;
+    height: 100vh;
+    background: #0d1eb651;
+    color: #ffffff;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.historico-lateral h4 {
+    margin-top: 0
+}
+.historico-item {
+    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+    font-size: 1rem;
+}
