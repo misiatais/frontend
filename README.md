@@ -16,14 +16,18 @@ Este é o frontend do projeto **Autismind**, uma aplicação web desenvolvida pa
 ## Estrutura de Pastas
 ```
 frontend/
-├── chat.html         # Tela principal do chat
-├── index.html        # Tela de início
+├── public/
+│   ├── chat/
+│   │   ├── chat.html      # Tela principal do chat
+│   │   └── chat.js        # JS da tela de chat
+│   └── index/
+│       ├── index.html     # Tela de início
+│       └── index.js       # JS da tela inicial
+├── imagem/
+│   └── blue1.jpg          # Imagem utilizada no projeto
 ├── LICENSE
 ├── README.md
-├── script.js         # Interações do usuário e integração com o backend
-├── styles.css        # Estilização do projeto
-└── imagem/
-    └── blue1.jpg
+├── styles.css             # Estilização global do projeto
 ```
 
 ---
