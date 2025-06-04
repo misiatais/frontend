@@ -2,7 +2,7 @@
 
 // Funções utilitárias
 function verifyEmail(email) {
-    return /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email);
+  return /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email);
 }
 
 // --- CÓDIGO DA TELA DE CHAT ---
@@ -119,7 +119,21 @@ if (btnLogin && telaLogin && btnFecharLogin && formLogin) {
       if (response.ok) {
         alert('Login realizado com sucesso!');
         telaLogin.style.display = 'none';
+        console.log(data.user);
         document.getElementsByClassName('txt-link')[0].textContent = `${data.user.username}`;
+
+        // adicionar o histórico de usuário na tela de histórico
+        const dataHistorico = await fetch(`http://localhost:3000/api/users/${data.user.id}/historical`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${data.user.jwt_token}` }
+        }).then(res => res.json()).then(historico => {
+          localStorage.setItem('historico', JSON.stringify(historico));
+          console.log(historico);
+          // mostrarHistorico();
+        });
+        // console.log('Histórico carregado com sucesso');
+
+
       } else {
         alert(data.message || 'Erro no login');
       }
@@ -133,16 +147,35 @@ if (btnLogin && telaLogin && btnFecharLogin && formLogin) {
 // Histórico
 function mostrarHistorico() {
   const lista = document.getElementById('historico-lista');
+  lista.innerHTML = '';
   let historico = JSON.parse(localStorage.getItem('historico')) || [];
   lista.innerHTML = '';
   if (historico.length === 0) {
     lista.innerHTML = '<p>Nenhuma conversa salva.</p>';
     return;
   }
-  historico.reverse().forEach(item => {
+  // Corrige: historico pode ser um array de conversas ou de objetos diferentes
+  if (!Array.isArray(historico)) {
+    // Se o histórico vier do backend, pode estar dentro de um objeto { historical: [...] }
+    if (historico && Array.isArray(historico.historical)) {
+      historico = historico.historical;
+    } else {
+      historico = [];
+    }
+  }
+  historico.forEach(item => {
     const div = document.createElement('div');
     div.className = 'historico-item';
-    div.innerHTML = `<strong>${item.data}:</strong> ${item.texto}`;
+    // Suporte para diferentes formatos de histórico
+    if (item.data && item.texto) {
+      div.innerHTML = `<strong>${item.data}:</strong> ${item.texto}`;
+    } else if (item.data && item.conversa) {
+      div.innerHTML = `<strong>${item.data}:</strong><br>${item.conversa.map(m => `<span>${m.remetente}: ${m.texto}</span>`).join('<br>')}`;
+    } else if (item.date && item.chat_title) {
+      div.innerHTML = `<strong>${new Date(item.date).toLocaleString()}:</strong> ${item.chat_title}`;
+    } else {
+      div.textContent = JSON.stringify(item);
+    }
     lista.appendChild(div);
   });
 }
