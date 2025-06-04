@@ -46,4 +46,4 @@ frontend/
 
 ---
 
-> Preencha a tabela acima com os nomes, funções e perfis do GitHub dos membros do grupo.
+> Mísia Taís
