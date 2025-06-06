@@ -1,11 +1,7 @@
-// Código JS exclusivo para a tela de chat
-
-// Funções utilitárias
 function verifyEmail(email) {
   return /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email);
 }
 
-// --- CÓDIGO DA TELA DE CHAT ---
 const btnExpandir = document.querySelector('.btn-expandir');
 const menuLateral = document.querySelector('.menu-lateral');
 if (btnExpandir && menuLateral) {
@@ -41,54 +37,6 @@ if (chatForm) {
 }
 addMessage('Olá! Seja bem-vindo(a) ao AutisMind. Como posso ajudar?', 'bot');
 
-// Personagem
-const btnPersonagem = document.getElementById('btn-personagem');
-const telaPersonagem = document.getElementById('criar-personagem');
-const btnFecharPersonagem = document.getElementById('fechar-personagem');
-if (btnPersonagem && telaPersonagem && btnFecharPersonagem) {
-  btnPersonagem.addEventListener('click', (e) => {
-    e.preventDefault();
-    telaPersonagem.style.display = 'flex';
-  });
-  btnFecharPersonagem.addEventListener('click', () => {
-    telaPersonagem.style.display = 'none';
-  });
-}
-const formPersonagem = document.getElementById('form-personagem');
-const inputNome = document.getElementById('personagem-nome');
-const inputPersonalidade = document.getElementById('personagem-personalidade');
-if (formPersonagem && inputNome && inputPersonalidade) {
-  formPersonagem.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const nome = inputNome.value.trim();
-    const personalidade = inputPersonalidade.value.trim();
-    if (!nome || !personalidade) {
-      alert('Preencha todos os campos!');
-      return;
-    }
-    try {
-      const response = await fetch('http://localhost:3000/api/characters', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: nome, personality: personalidade })
-      });
-      const data = await response.json();
-      if (response.ok) {
-        alert('Personagem criado com sucesso!');
-        inputNome.value = '';
-        inputPersonalidade.value = '';
-        document.getElementById('criar-personagem').style.display = 'none';
-      } else {
-        alert('Erro ao criar personagem: ' + (data.message || 'Erro desconhecido'));
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Erro de conexão com o servidor');
-    }
-  });
-}
-
-// Login
 const btnLogin = document.getElementById('btn-login');
 const telaLogin = document.getElementById('tela-login');
 const btnFecharLogin = document.getElementById('fechar-login');
@@ -119,21 +67,22 @@ if (btnLogin && telaLogin && btnFecharLogin && formLogin) {
       if (response.ok) {
         alert('Login realizado com sucesso!');
         telaLogin.style.display = 'none';
-        console.log(data.user);
         document.getElementsByClassName('txt-link')[0].textContent = `${data.user.username}`;
-
-        // adicionar o histórico de usuário na tela de histórico
-        const dataHistorico = await fetch(`http://localhost:3000/api/users/${data.user.id}/historical`, {
+        localStorage.setItem('token', data.user.jwt_token);
+        localStorage.setItem('userId', data.user.id);
+        await fetch(`http://localhost:3000/api/users/${data.user.id}/historical`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${data.user.jwt_token}` }
-        }).then(res => res.json()).then(historico => {
-          localStorage.setItem('historico', JSON.stringify(historico));
-          console.log(historico);
-          // mostrarHistorico();
-        });
-        // console.log('Histórico carregado com sucesso');
-
-
+        })
+          .then(res => res.json())
+          .then(apiResponse => {
+            if (apiResponse && Array.isArray(apiResponse.historical)) {
+              localStorage.setItem('historico', JSON.stringify(apiResponse.historical));
+            } else {
+              localStorage.setItem('historico', JSON.stringify([]));
+            }
+          });
+        carregarPersonagensNoSelect();
       } else {
         alert(data.message || 'Erro no login');
       }
@@ -144,29 +93,100 @@ if (btnLogin && telaLogin && btnFecharLogin && formLogin) {
   });
 }
 
-// Histórico
+// Carrega personagens no select do modal Novo Chat
+async function carregarPersonagensNoSelect() {
+  var personagens = document.getElementById('personagens');
+  if (!personagens) {
+    console.error('Elemento <select id="personagens"> não encontrado.');
+    return;
+  }
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      personagens.innerHTML = '<option value="">Faça login para ver os personagens</option>';
+      return;
+    }
+    const response = await fetch('http://localhost:3000/api/characters', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: response.statusText }));
+      personagens.innerHTML = '<option value="">Erro ao carregar personagens</option>';
+      return;
+    }
+    const responsePersonagens = await response.json();
+    personagens.innerHTML = '<option value="">Selecione um personagem</option>';
+    let lista = [];
+    if (responsePersonagens && Array.isArray(responsePersonagens.characters)) {
+      lista = responsePersonagens.characters;
+    } else if (Array.isArray(responsePersonagens)) {
+      lista = responsePersonagens;
+    } else if (responsePersonagens && Array.isArray(responsePersonagens.data)) {
+      lista = responsePersonagens.data;
+    }
+    if (lista.length === 0) {
+      personagens.innerHTML += '<option disabled>Nenhum personagem encontrado</option>';
+    } else {
+      lista.forEach(personagem => {
+        var option = document.createElement('option');
+        option.value = personagem.id;
+        option.textContent = `${personagem.name} - (${personagem.personality})`;
+        personagens.appendChild(option);
+      });
+    }
+  } catch (error) {
+    console.error('Erro ao carregar personagens (catch):', error.message || error);
+    alert('Erro ao carregar personagens. Tente novamente mais tarde.');
+  }
+}
+
+const btnNovoChat = document.getElementById('btn-novo-chat');
+const telaNovoChat = document.getElementById('novo-chat');
+const btnFecharChat = document.getElementById('fechar-chat');
+if (btnNovoChat && telaNovoChat && btnFecharChat) {
+  btnNovoChat.addEventListener('click', async function (e) {
+    e.preventDefault();
+    telaNovoChat.style.display = 'flex';
+    await carregarPersonagensNoSelect();
+    if (messages) {
+      messages.innerHTML = '';
+      addMessage('Olá! Seja bem-vindo(a) ao AutisMind. Como posso ajudar?', 'bot');
+    }
+  });
+  btnFecharChat.addEventListener('click', function () {
+    telaNovoChat.style.display = 'none';
+  });
+}
+
 function mostrarHistorico() {
   const lista = document.getElementById('historico-lista');
   lista.innerHTML = '';
-  let historico = JSON.parse(localStorage.getItem('historico')) || [];
-  lista.innerHTML = '';
+  let historico = [];
+  try {
+    const raw = localStorage.getItem('historico');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        historico = parsed;
+      } else if (parsed && Array.isArray(parsed.historical)) {
+        historico = parsed.historical;
+      } else if (parsed && Array.isArray(parsed.data)) {
+        historico = parsed.data;
+      } else if (typeof parsed === 'object' && parsed !== null) {
+        historico = [parsed];
+      }
+    }
+  } catch (e) {
+    historico = [];
+  }
   if (historico.length === 0) {
     lista.innerHTML = '<p>Nenhuma conversa salva.</p>';
     return;
   }
-  // Corrige: historico pode ser um array de conversas ou de objetos diferentes
-  if (!Array.isArray(historico)) {
-    // Se o histórico vier do backend, pode estar dentro de um objeto { historical: [...] }
-    if (historico && Array.isArray(historico.historical)) {
-      historico = historico.historical;
-    } else {
-      historico = [];
-    }
-  }
   historico.forEach(item => {
     const div = document.createElement('div');
     div.className = 'historico-item';
-    // Suporte para diferentes formatos de histórico
     if (item.data && item.texto) {
       div.innerHTML = `<strong>${item.data}:</strong> ${item.texto}`;
     } else if (item.data && item.conversa) {
@@ -192,7 +212,15 @@ if (btnHistorico && fecharHistorico) {
   });
 }
 function salvarConversa() {
-  let historico = JSON.parse(localStorage.getItem('historico')) || [];
+  let historico;
+  try {
+    historico = JSON.parse(localStorage.getItem('historico'));
+  } catch (e) {
+    historico = [];
+  }
+  if (!Array.isArray(historico)) {
+    historico = [];
+  }
   const mensagens = Array.from(document.querySelectorAll('#messages .message')).map(div => ({
     texto: div.textContent,
     remetente: div.classList.contains('user') ? 'Usuário' : 'Bot'
@@ -217,13 +245,12 @@ const sair = document.querySelector('.item-menu .bi-box-arrow-right');
 if (sair) {
   sair.closest('a').addEventListener('click', function (e) {
     e.preventDefault();
-    if (confirm('Quer mesmo nos deixar?:(')) {
-      localStorage.removeItem('usuario');
-      window.location.href = 'index.html';
+    if (confirm('Quer mesmo nos deixar? :(')) {
+      localStorage.clear();
+      window.location.href = '../index/index.html';
     }
   });
 }
-// Configurações
 const config = document.querySelector('.item-menu .bi-gear');
 if (config) {
   config.closest('a').addEventListener('click', function (e) {

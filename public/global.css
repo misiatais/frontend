@@ -1,0 +1,19 @@
+/* Estilos globais para todo o projeto */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif, Arial, sans-serif;
+}
+
+body {
+  background: url('../imagem/blue1.jpg') no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+  height: 100vh;
+}
+
+button, input, select {
+  font-family: inherit;
+}

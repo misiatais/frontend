@@ -19,15 +19,17 @@ frontend/
 ├── public/
 │   ├── chat/
 │   │   ├── chat.html      # Tela principal do chat
-│   │   └── chat.js        # JS da tela de chat
-│   └── index/
-│       ├── index.html     # Tela de início
-│       └── index.js       # JS da tela inicial
+│   │   ├── chat.js        # JS da tela de chat
+│   │   └── chat.css       # CSS da tela de chat
+│   ├── index/
+│   │   ├── index.html     # Tela de início
+│   │   ├── index.js       # JS da tela inicial
+│   │   └── index.css      # CSS da tela inicial
+│   └── global.css         # Estilos globais
 ├── imagem/
 │   └── blue1.jpg          # Imagem utilizada no projeto
 ├── LICENSE
 ├── README.md
-├── styles.css             # Estilização global do projeto
 ```
 
 ---

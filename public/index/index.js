@@ -22,9 +22,12 @@ if (formCadastro) {
             communication_level: 5 // Nível de comunicação padrão
         };
         try {
+            // Revertendo para fetch direto conforme solicitado
             const response = await fetch('http://localhost:3000/api/users', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(usuario)
             });
             let data = null;
