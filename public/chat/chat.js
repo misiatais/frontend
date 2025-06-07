@@ -1,4 +1,5 @@
 // Variáveis Globais (para controlar o estado do chat)
+const baseURL = 'http://localhost:3000';
 let currentChatId = null;
 let currentChatTitle = '';
 
@@ -55,7 +56,7 @@ async function checkAuthAndLoadData() {
   try {
     // Tenta buscar o histórico para validar o token.
     // Se este endpoint exigir autenticação, ele servirá como uma validação do token.
-    const response = await fetch(`http://localhost:3000/api/users/${userId}/historical`, {
+    const response = await fetch(`${baseURL}/api/users/${userId}/historical`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
     });
@@ -177,7 +178,7 @@ function handleLogin() {
       }
 
       try {
-        const response = await fetch('http://localhost:3000/api/login', {
+        const response = await fetch(`${baseURL}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
@@ -188,11 +189,12 @@ function handleLogin() {
           alert('Login realizado com sucesso!');
           telaLogin.style.display = 'none';
           document.getElementsByClassName('txt-link')[0].textContent = `${data.user.username}`;
+          localStorage.setItem('username', data.user.username);
           localStorage.setItem('token', data.user.jwt_token);
           localStorage.setItem('userId', data.user.id);
 
           // Carrega o histórico após o login bem-sucedido
-          await fetch(`http://localhost:3000/api/users/${data.user.id}/historical`, {
+          await fetch(`${baseURL}/api/users/${data.user.id}/historical`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${data.user.jwt_token}` }
           })
@@ -272,7 +274,7 @@ function handleNewChat() {
           return;
         }
 
-        const response = await fetch('http://localhost:3000/api/chats', {
+        const response = await fetch(`${baseURL}/api/chats`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -325,7 +327,7 @@ async function loadCharactersForNewChat() {
       return;
     }
 
-    const response = await fetch('http://localhost:3000/api/characters', {
+    const response = await fetch(`${baseURL}/api/characters`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
     });
@@ -392,7 +394,7 @@ function handleChatMessaging() {
         }
 
         // 1. Salva a mensagem do usuário no backend
-        const userMessageSaveResponse = await fetch(`http://localhost:3000/api/messages/chat/${currentChatId}`, {
+        const userMessageSaveResponse = await fetch(`${baseURL}/api/messages/chat/${currentChatId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({
@@ -411,7 +413,7 @@ function handleChatMessaging() {
         addMessageToUI(botReply, 'bot', new Date().toISOString());
 
         // 3. Salva a resposta do bot no backend
-        const botMessageSaveResponse = await fetch(`http://localhost:3000/api/messages/chat/${currentChatId}`, {
+        const botMessageSaveResponse = await fetch(`${baseURL}/api/messages/chat/${currentChatId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({
@@ -467,7 +469,7 @@ async function loadAndDisplayHistory() {
   }
 
   try {
-    const response = await fetch(`http://localhost:3000/api/users/${userId}/historical`, {
+    const response = await fetch(`${baseURL}/api/users/${userId}/historical`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
     });
@@ -533,7 +535,7 @@ async function loadSpecificChat(chatId) {
   }
 
   try {
-    const response = await fetch(`http://localhost:3000/api/chat/${chatId}/messages/${userId}`, {
+    const response = await fetch(`${baseURL}/api/chat/${chatId}/messages/${userId}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
     });
