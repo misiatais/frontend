@@ -219,6 +219,15 @@ nav.menu-lateral.expandir~main.conteudo-principal {
     border-bottom-left-radius: 4px;
 }
 
+.message-timestamp {
+  font-size: 0.8em;
+  margin: 4px 0 0 0;
+  color: #888888;
+}
+.message.user .message-timestamp {
+  color: #2a4d8f;
+}
+
 .input-area {
     display: flex;
     border-top: 1px solid #333;
