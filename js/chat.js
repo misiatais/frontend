@@ -8,6 +8,14 @@ function verifyEmail(email) {
   return /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email);
 }
 
+function formatMessageText(text) {
+  if (!text) return '';
+  let formatted = text.replace(/([,.!?])(\S)/g, '$1 $2');
+  formatted = formatted.replace(/ +/g, ' ');
+  formatted = formatted.replace(/\n/g, '<br>');
+  return formatted.trim();
+}
+
 function addMessageToUI(text, sender, timestamp = null) {
   const messagesContainer = document.getElementById('messages');
   if (!messagesContainer) {
@@ -15,24 +23,19 @@ function addMessageToUI(text, sender, timestamp = null) {
     return;
   }
   const div = document.createElement('div');
-
   div.classList.add('message', sender);
-  div.textContent = text;
-
-  // Adiciona a data/hora de envio
+  div.innerHTML = formatMessageText(text);
   const p = document.createElement('p');
   p.className = 'message-timestamp';
-  // Se não for passado timestamp, usa o horário atual
   const date = timestamp ? new Date(timestamp) : new Date();
   p.textContent = date.toLocaleString();
   p.style.fontSize = '0.8em';
   p.style.margin = '4px 0 0 0';
   p.style.color = '#888';
   if (sender === 'user') {
-    p.style.color = '#00000070'; // Cor diferente para mensagens do usuário
+    p.style.color = '#00000070';
   }
   div.appendChild(p);
-
   messagesContainer.appendChild(div);
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
@@ -300,8 +303,27 @@ function handleNewChat() {
 
         alert('Chat criado com sucesso!');
         telaNovoChat.style.display = 'none';
-        document.getElementById('messages').innerHTML = ''; // Limpa antes de adicionar a mensagem inicial
-        addMessageToUI(`Chat "${currentChatTitle}" iniciado! Como posso ajudar?`, 'bot');
+        // Carrega imediatamente o novo chat criado
+        await loadSpecificChat(currentChatId);
+        // Foca o input do chat para o usuário já digitar
+        let chatInputElem = document.getElementById('chat-input');
+        if (chatInputElem) chatInputElem.focus();
+
+        // --- UX Improvement: Enable chat input and focus for immediate messaging ---
+        const chatInput = document.getElementById('chat-input');
+        const chatForm = document.getElementById('chat-form');
+        if (chatInput) {
+          chatInput.disabled = false;
+          chatInput.focus();
+        }
+        if (chatForm) {
+          chatForm.classList.remove('disabled'); // In case you use a class to disable
+        }
+
+        // --- Optionally reload chat history so new chat appears immediately ---
+        if (typeof loadAndDisplayHistory === 'function') {
+          loadAndDisplayHistory();
+        }
 
       } catch (error) {
         alert('Erro ao criar novo chat. Tente novamente mais tarde.');
@@ -404,28 +426,14 @@ function handleChatMessaging() {
           })
         });
 
-        if (!userMessageSaveResponse.ok) {
+        if (userMessageSaveResponse.ok) {
+          // Se a resposta for ok, pega a resposta da IA e análise do backend
+          const data = await userMessageSaveResponse.json();
+          if (data && data.aiResponse) {
+            addMessageToUI(data.aiResponse, 'bot', new Date().toISOString());
+          }
+        } else {
           console.error('Erro ao salvar mensagem do usuário.');
-        }
-
-        // 2. Simula a resposta do bot (Integre sua lógica de IA aqui)
-        const botReply = `Você disse: "${userMsg}"? Isso aí é com o Mikael!`;
-        addMessageToUI(botReply, 'bot', new Date().toISOString());
-
-        // 3. Salva a resposta do bot no backend
-        const botMessageSaveResponse = await fetch(`${baseURL}/api/messages/chat/${currentChatId}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({
-            user_id: localStorage.getItem('userId'),
-            content: botReply,
-            sent_by: 'bot'
-          })
-        });
-
-        if (!botMessageSaveResponse.ok) {
-          console.error('Erro ao salvar mensagem do bot.');
-          alert('Erro ao salvar mensagem do bot. Tente novamente.');
         }
 
       } catch (error) {
