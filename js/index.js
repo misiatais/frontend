@@ -103,3 +103,58 @@ if(slider && output) {
     output.textContent = this.value;
   }
 }
+
+// Função para aplicar o tema salvo
+function applySavedTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(savedTheme);
+}
+
+// Função para alternar entre temas
+function setTheme(theme) {
+  document.body.classList.remove('tema-escuro', 'tema-claro');
+  
+  if (theme === 'dark') {
+    document.body.classList.add('tema-escuro');
+  } else {
+    document.body.classList.add('tema-claro');
+  }
+  
+  localStorage.setItem('theme', theme);
+}
+
+// Função para alternar o tema
+function toggleTheme() {
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  setTheme(newTheme);
+}
+
+// Adicione no seu initialization
+function init() {
+  // ... outro código de inicialização ...
+  
+  applySavedTheme();
+  
+  // Adicione um botão para alternar temas (opcional)
+  const themeToggleBtn = document.createElement('button');
+  themeToggleBtn.id = 'theme-toggle';
+  themeToggleBtn.innerHTML = '🌓';
+  themeToggleBtn.style.position = 'fixed';
+  themeToggleBtn.style.bottom = '20px';
+  themeToggleBtn.style.right = '20px';
+  themeToggleBtn.style.zIndex = '1000';
+  themeToggleBtn.style.background = 'var(--primary-color)';
+  themeToggleBtn.style.color = 'white';
+  themeToggleBtn.style.border = 'none';
+  themeToggleBtn.style.borderRadius = '50%';
+  themeToggleBtn.style.width = '40px';
+  themeToggleBtn.style.height = '40px';
+  themeToggleBtn.style.cursor = 'pointer';
+  themeToggleBtn.style.fontSize = '20px';
+  
+  themeToggleBtn.addEventListener('click', toggleTheme);
+  document.body.appendChild(themeToggleBtn);
+  
+  // ... resto do código de inicialização ...
+}

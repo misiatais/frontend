@@ -1,5 +1,26 @@
 /* Estilos específicos da tela de chat.html */
 
+:root {
+  --bg-body: #ffffff;
+  --bg-chat: rgba(30, 30, 30, 0.9);
+  --bg-input: #222;
+  --bg-message-user: #0b93f6;
+  --bg-message-bot: #333;
+  --text-color: #000;
+  --text-color-light: #eee;
+  --text-color-muted: #888;
+}
+body.tema-escuro {
+  --bg-body: #121212;
+  --bg-chat: rgba(20, 20, 20, 0.95);
+  --bg-input: #111;
+  --bg-message-user: #003366;
+  --bg-message-bot: #222;
+  --text-color: #ffffff;
+  --text-color-light: #dddddd;
+  --text-color-muted: #aaa;
+}
+
 #tela-login,
 #novo-chat {
     display: none;

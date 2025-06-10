@@ -644,3 +644,39 @@ function handleLogout() {
 
 // --- Execução Principal (Chamada das Funções) ---
 document.addEventListener('DOMContentLoaded', initializeChatUI);
+
+
+  const botaoTema = document.getElementById('toggle-theme');
+  const icone = document.getElementById('theme-icon');
+
+  botaoTema.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.body.classList.toggle('tema-escuro');
+
+    // Alternar o ícone
+    if (document.body.classList.contains('tema-escuro')) {
+      icone.classList.remove('bi-moon-stars');
+      icone.classList.add('bi-sun');
+    } else {
+      icone.classList.remove('bi-sun');
+      icone.classList.add('bi-moon-stars');
+    }
+
+    // (Opcional) Salvar no localStorage
+    localStorage.setItem('tema', document.body.classList.contains('tema-escuro') ? 'escuro' : 'claro');
+  });
+
+  // Aplicar o tema salvo ao carregar
+  window.addEventListener('DOMContentLoaded', () => {
+    const temaSalvo = localStorage.getItem('tema');
+    if (temaSalvo === 'escuro') {
+      document.body.classList.add('tema-escuro');
+      icone.classList.remove('bi-moon-stars');
+      icone.classList.add('bi-sun');
+    }
+  });
+  if (localStorage.getItem('usuarioLogado')) {
+  window.location.href = "chat.html";
+}
+
+
