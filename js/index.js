@@ -95,3 +95,11 @@ if (formLogin) {
         }
     });
 }
+
+const slider = document.getElementById('nivel-comunicacao');
+const output = document.getElementById('valor-nivel-comunicacao');
+if(slider && output) {
+  slider.oninput = function() {
+    output.textContent = this.value;
+  }
+}
