@@ -636,7 +636,7 @@ function handleLogout() {
       e.preventDefault();
       if (confirm('Quer mesmo nos deixar? :(')) {
         localStorage.clear(); // Limpa todo o localStorage (token, userId, histórico, etc.)
-        window.location.href = './index.html'; // Redireciona para a página inicial
+        window.location.href = '../index.html'; // Redireciona para a página inicial
       }
     });
   }
